@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+					       http://www.springframework.org/schema/beans/spring-beans.xsd
+					       http://www.springframework.org/schema/tx  
+    					   http://www.springframework.org/schema/tx/spring-tx.xsd
+					       http://www.springframework.org/schema/mvc 
+ 						   http://www.springframework.org/schema/mvc/spring-mvc.xsd
+					       http://www.springframework.org/schema/context
+					       http://www.springframework.org/schema/context/spring-context.xsd">
+
+			<!-- 配置数据源 -->
+			<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource">
+				<!-- 四要素 -->
+				<property name="driverClassName" value="${jdbc.driver}"></property>
+				<property name="url" value="${jdbc.url}"></property>
+				<property name="username" value="${jdbc.username}"></property>
+				<property name="password" value="${jdbc.password}"></property>
+			</bean>
+			
+			<!-- 加载jdbc.properties -->
+			<context:property-placeholder location="classpath:jdbc.properties"/>
+			
+			<!-- 配置sqlsessionFactory -->
+			<bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactory">
+					<property name="dataSource" ref="dataSource"></property>
+					<!-- 配置pageHelper -->
+					<property name="plugins">
+							<array>
+									<bean class="com.github.pagehelper.PageInterceptor">
+											<property name="properties">
+													<value>param1=value1</value>
+											</property>
+									</bean>
+							</array>
+					</property>
+			</bean>
+			<!-- 扫描mapper接口 -->
+			<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+				<!-- 注入sqlSessionFactory -->
+				<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+				<!-- 指定mapper的目录 -->
+				<property name="basePackage" value="com.offcn.house.mapper"></property>
+			</bean>
+			
+			<!-- 扫描注解 -->
+			<context:component-scan base-package="com.offcn.house">
+					<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+			</context:component-scan>
+</beans>

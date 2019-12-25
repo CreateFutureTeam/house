@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.offcn.house.mapper.HouseMapper" >
+
+<insert id="addHouse" parameterType="com.offcn.house.pojo.House">
+	insert into house(user_Id,type_Id,title,description,price,pubdate,floorage,contact,street_Id)
+	values(#{userId},#{typeId},#{title},#{description},#{price},#{pubdate},#{floorage},#{contact},#{streetId})
+</insert>
+
+<update id="update" parameterType="com.offcn.house.pojo.House">
+		update house 
+		<set>
+			<if test="typeId!=null and typeId>0">
+				type_Id=#{typeId},
+			</if>
+			<if test="title!=null and title!=''">
+				title=#{title},
+			</if>
+			<if test="description!=null and description!='' ">
+				description=#{description},
+			</if>
+			<if test="price!=null and price>=0">
+				price=#{price},
+			</if>
+			<if test="pubdate!=null">
+				pubdate=#{pubdate},
+			</if>
+			<if test="floorage!=null and floorage>0">
+				floorage=#{floorage},
+			</if>
+			<if test="contact!=null and contact!=''">
+				contact=#{contact},
+			</if>
+			<if test="streetId!=null and streetId>0 ">
+				street_Id=#{streetId}
+			</if>
+		
+		</set>
+			where id=#{id}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from house where id=#{id}
+	</delete>
+
+
+
+
+
+
+<select id="findAll" resultType="com.offcn.house.pojo.House">
+	select h.*,s.name as streetName,d.name as districtName from house h,street s,district d 
+	where h.street_id=s.id and s.district_id=d.id
+</select>
+
+<select id="findById"  resultType="com.offcn.house.pojo.House">
+		select h.*,h.street_id as streetId,d.id as driId,t.name as typeName from house h,type t,district d ,street s where h.TYPE_ID=t.ID and h.street_id=s.id and s.district_id=d.id and h.ID=#{id}
+</select>
+	<select id="findByIds" resultType="com.offcn.house.pojo.House">
+		select *,user_Id as userId from house where id=#{id}
+	</select>
+	<select id="findByCondition" resultType="com.offcn.house.pojo.House">
+	select h.*,h.user_Id as userId,s.name as streetName,d.name as districtName from house h,street s,district d 
+		<where>
+			h.street_id=s.id and s.district_id=d.id
+			<if test="title!=null and title!=''">
+				and title like '%${title}%'
+			</if>
+			<if test="minPrice>0 and maxPrice>0">
+				and price between #{minPrice} and #{maxPrice}
+			</if>
+			<if test="typeId!=null and typeId>0">
+				and type_Id=#{typeId}
+			</if>
+			<if test="minFloorage>0 and maxFloorage>0">
+				and floorage  between #{minFloorage} and #{maxFloorage}
+			</if>
+			<if test="beginTime!=null and  endTime==null ">
+				and pubdate &gt; #{beginTime}
+			</if>
+			<if test="endTime!=null and beginTime==null">
+				and pubdate &lt; #{endTime}
+			</if>
+			<if test="beginTime!=null and endTime!=null ">
+				and pubdate  between #{beginTime} and #{endTime}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findByName" resultType="com.offcn.house.pojo.House">
+		select * from house where title=#{title}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.offcn.house.mapper.StreetMapper" >
+	<select id="findAllStreet" resultType="com.offcn.house.pojo.Street">
+		select * from street
+	</select>
+	
+	<select id="findAllStreetById" resultType="com.offcn.house.pojo.Street">
+		select * from street  where DISTRICT_ID=#{id}  or DISTRICT_ID=#{strId}
+		<!--左边对应数据库表的属性,右边是传入的参数  随意-->
+		<!--  <where>
+			<if test="districtId>0">
+			 DISTRICT_ID=#{districtId}
+			</if>
+		</where>  -->
+	</select>
+</mapper>
